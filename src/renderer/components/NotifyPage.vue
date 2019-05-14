@@ -1,15 +1,47 @@
 <template>
 <div id="shinchoku-box">
     <div class="task-box">
-      <div id="next-task">タスク管理システムを完成させる</div>
+      <div id="next-task">{{messageList[0].text}} </div>
     </div>
-    <button class="btn-border">Next</button>
+    <button class="btn-border" @click="removeMessage(messageList[0].id)">Next</button>
 </div>
 </template>
 
 <script>
+import firebase from 'firebase';
 export default {
   name: 'notify-page',
+  data() {
+    return {
+      message: null,
+      errorMessage: null,
+      messageList: [],
+    };
+  },
+  created() {
+    this.loadMessages();
+  },
+  methods: {
+    removeMessage(id) {
+      firebase.database().ref(`/messages/${id}`).remove();
+      console.log(`removing ${id}`);
+    },
+    loadMessages() {
+      firebase.database().ref('/messages/').on('value', (snapshot) => {
+        if (snapshot) {
+          const rootList = snapshot.val();
+          console.log(snapshot.val());
+          const messageList = [];
+          Object.keys(rootList).forEach((val) => {
+            rootList[val].id = val;
+            messageList.push(rootList[val]);
+          });
+          this.messageList = messageList;
+          console.log(this.messageList);
+        }
+      });
+    },
+  },
 };
 </script>
 
