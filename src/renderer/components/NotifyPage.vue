@@ -1,7 +1,7 @@
 <template>
 <div id="shinchoku-box">
     <div class="task-box">
-      <div id="next-task">{{messageList[0].text}} </div>
+      <div id="next-task"><div v-if="messageList.length > 0">{{messageList[0].text}}</div><div v-else>お疲れ様です！！タスクを全て消化しました！！</div></div>
     </div>
     <button class="btn-border" @click="removeMessage(messageList[0].id)">Next</button>
 </div>
@@ -32,10 +32,12 @@ export default {
           const rootList = snapshot.val();
           console.log(snapshot.val());
           const messageList = [];
-          Object.keys(rootList).forEach((val) => {
-            rootList[val].id = val;
-            messageList.push(rootList[val]);
-          });
+          if (rootList) {
+            Object.keys(rootList).forEach((val) => {
+              rootList[val].id = val;
+              messageList.push(rootList[val]);
+            });
+          }
           this.messageList = messageList;
           console.log(this.messageList);
         }
